@@ -31,16 +31,7 @@ If you use this code/model for your research, please consider citing the followi
 }
 ```
 
-
-#Installation Guide
-First, you should clone the project by doing as below.
-```
-git clone --recursive https://github.com/torrvision/crfasrnn.git
-```
-
-You need to compile the modified Caffe library in this repository. Instructions for Ubuntu 14.04 are included below. You can also consult the generic [Caffe installation guide](http://caffe.berkeleyvision.org/installation.html).
-
-###0.1 How to use new layer of CRF-RNN
+#How to use the CRF-RNN layer
 Copy and paste the layer into a new prototxt file, the usage of this layer is indicatd as below. Check example folder for more detailed examples.
 ```
 # This is part of FCN, coarse is the variable coming from FCN
@@ -79,6 +70,15 @@ layer {
   }
 }
 ```
+#Installation Guide
+First, you should clone the project by doing as below.
+```
+git clone --recursive https://github.com/torrvision/crfasrnn.git
+```
+
+You need to compile the modified Caffe library in this repository. Instructions for Ubuntu 14.04 are included below. You can also consult the generic [Caffe installation guide](http://caffe.berkeleyvision.org/installation.html).
+
+
 ###1.1 Install dependencies
 #####General dependencies
 ```
