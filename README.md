@@ -31,7 +31,45 @@ If you use this code/model for your research, please consider citing the followi
 }
 ```
 
+#How to use the CRF-RNN layer
+Copy and paste the layer into a new prototxt file, the usage of this layer is indicatd as below. Check example folder for more detailed examples.
+```
+# This is part of FCN, coarse is the variable coming from FCN
+layer { type: 'Crop' name: 'crop' bottom: 'bigscore' bottom: 'data' top: 'coarse' }
 
+# This layer is used to split the output of FCN into two, which is required by CRF-RNN
+layer { type: 'Split' name: 'splitting'
+  bottom: 'coarse' top: 'unary' top: 'Q0'
+}
+
+layer {
+  name: "inference1"#if you set name "inference1", code will load parameters from caffemodel. Otherwise it will create a new layer with manually set parameters
+  type: "MultiStageMeanfield" #type of this layer
+  bottom: "unary" #input from FCN
+  bottom: "Q0" #input from FCN
+  bottom: "data" #input image
+  top: "pred" #output of CRF-RNN
+  param {
+    lr_mult: 10000#learning rate for W_G
+  }
+  param {
+  lr_mult: 10000#learning rate for W_B
+  }
+  param {
+  lr_mult: 1000 #learning rate for compatiblity transform matrix
+  }
+  multi_stage_meanfield_param {
+   num_iterations: 10 #Number of iterations for CRF-RNN
+   compatibility_mode: POTTS#Initialize the compatilibity transform matrix with a matrix whose diagonal is -1.
+   threshold: 2
+   theta_alpha: 160
+   theta_beta: 3
+   theta_gamma: 3
+   spatial_filter_weight: 3
+   bilateral_filter_weight: 5
+  }
+}
+```
 #Installation Guide
 First, you should clone the project by doing as below.
 ```
