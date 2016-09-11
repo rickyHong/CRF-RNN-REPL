@@ -208,6 +208,8 @@ hyenal kindly provided a purely GPU version of CRF-RNN. This would lead to consi
 
 1. [hyenal's GPU crf-rnn](https://github.com/hyenal/crfasrnn)
 
+####Latest Caffe with CPU/GPU CRF-RNN
+[crfasrnn-caffe](https://github.com/bittnt/caffe/tree/crfrnn)
 Let us know if we miss any other works from third parties.
 
 # LICENSE
