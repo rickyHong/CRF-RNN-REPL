@@ -1,6 +1,8 @@
 # CRF-RNN for Semantic Image Segmentation
 ![sample](sample.png)
 
+[![License (3-Clause BSD)](https://img.shields.io/badge/license-BSD%203--Clause-brightgreen.svg?style=flat-square)](https://github.com/torrvision/crfasrnn/blob/master/LICENSE)
+
 <b>Live demo:</b> [http://crfasrnn.torr.vision](http://crfasrnn.torr.vision)
 <b>update:</b> This version of code is integrated with the latest caffe future version.
 
@@ -213,20 +215,5 @@ hyenal kindly provided a purely GPU version of CRF-RNN. This would lead to consi
 
 Let us know if we miss any other works from third parties.
 
-# LICENSE
-CRF-RNN feature in Caffe is implemented for the paper:
-Shuai Zheng, Sadeep Jayasumana, Bernardino Romera-Paredes, Vibhav Vineet, Zhizhong Su, Dalong Du, Chang Huang, Philip H. S. Torr.
-Conditional Random Fields as Recurrent Neural Networks. IEEE ICCV 2015.
-
-Shuai Zheng, Sadeep Jayasumana, Bernardino Romera-Paredes, and Philip H. S. Torr are with University of Oxford.
-Vibhav Vineet did this work when he was with the University of Oxford, he is now with the Stanford University.
-Zhizhong Su, Dalong Du, Chang Huang are with the Baidu Institute of Deep Learning (IDL).
-
-CRF-RNN uses the Permutohedral lattice library, the DenseCRF library and the Caffe future version.
-
-Permutohedral lattice library (BSD license) is from Andrew Adams, Jongmin Baek, Abe Davis. Fast High-Dimensional Filtering Using the
-Permutohedral Lattice. Eurographics 2010.
-DenseCRF library from Philipp Krahenbuhl and Vladlen Koltun. Efficient Inference in Fully Connected CRFs with Gaussian Edge Potentials.
-NIPS 2011.
 
 For more information about CRF-RNN please vist the project website http://crfasrnn.torr.vision. Contact: <crfasrnn@gmail.com>
