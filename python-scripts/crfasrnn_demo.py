@@ -44,6 +44,26 @@ def toc():
         print "Toc: start time not set"
 
 
+def getpallete(num_cls):
+        # this function is to get the colormap for visualizing the segmentation mask
+        n = num_cls
+        pallete = [0]*(n*3)
+        for j in xrange(0,n):
+                lab = j
+                pallete[j*3+0] = 0
+                pallete[j*3+1] = 0
+                pallete[j*3+2] = 0
+                i = 0
+                while (lab > 0):
+                        pallete[j*3+0] |= (((lab >> 0) & 1) << (7-i))
+                        pallete[j*3+1] |= (((lab >> 1) & 1) << (7-i))
+                        pallete[j*3+2] |= (((lab >> 2) & 1) << (7-i))
+                        i = i + 1
+                        lab >>= 3
+        return pallete
+
+
+
 def run_crfasrnn(inputfile, outputfile, gpudevice):
     MODEL_FILE = 'TVG_CRFRNN_new_deploy.prototxt'
     PRETRAINED = 'TVG_CRFRNN_COCO_VOC.caffemodel'
@@ -81,34 +101,7 @@ def run_crfasrnn(inputfile, outputfile, gpudevice):
     image = PILImage.fromarray(np.uint8(input_image))
     image = np.array(image)
 
-    pallete = [0,0,0,
-            128,0,0,
-            0,128,0,
-            128,128,0,
-            0,0,128,
-            128,0,128,
-            0,128,128,
-            128,128,128,
-            64,0,0,
-            192,0,0,
-            64,128,0,
-            192,128,0,
-            64,0,128,
-            192,0,128,
-            64,128,128,
-            192,128,128,
-            0,64,0,
-            128,64,0,
-            0,192,0,
-            128,192,0,
-            0,64,128,
-            128,64,128,
-            0,192,128,
-            128,192,128,
-            64,64,0,
-            192,64,0,
-            64,192,0,
-            192,192,0]
+    palette = getpallete(256)
 
     mean_vec = np.array([103.939, 116.779, 123.68], dtype=np.float32)
     reshaped_mean_vec = mean_vec.reshape(1, 1, 3);
