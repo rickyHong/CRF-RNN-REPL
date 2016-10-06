@@ -69,7 +69,7 @@ def run_crfasrnn(inputfile, outputfile, gpudevice):
     PRETRAINED = 'TVG_CRFRNN_COCO_VOC.caffemodel'
     IMAGE_FILE = inputfile
 
-    if gpudevice >=0:
+    if gpudevice > 0:
         #Do you have GPU device?
         has_gpu = 1
         #which gpu device is available?
@@ -101,7 +101,7 @@ def run_crfasrnn(inputfile, outputfile, gpudevice):
     image = PILImage.fromarray(np.uint8(input_image))
     image = np.array(image)
 
-    palette = getpallete(256)
+    pallete = getpallete(256)
 
     mean_vec = np.array([103.939, 116.779, 123.68], dtype=np.float32)
     reshaped_mean_vec = mean_vec.reshape(1, 1, 3);
