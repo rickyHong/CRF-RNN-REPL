@@ -10,8 +10,10 @@ This package contains code for the "CRF-RNN" semantic image segmentation method,
 
 [Sadeep Jayasumana](http://www.robots.ox.ac.uk/~sadeep/),
 [Shuai Zheng](http://kylezheng.org/),
-[Bernardino Romera Paredes](http://romera-paredes.com/), and
-[Zhizhong Su](suzhizhong@baidu.com).
+[Bernardino Romera Paredes](http://romera-paredes.com/), 
+[Anurag Arnab](http://www.robots.ox.ac.uk/~aarnab/),
+and
+Zhizhong Su.
 
 Supervisor: [Philip Torr](http://www.robots.ox.ac.uk/~tvg/)
 
@@ -32,6 +34,15 @@ If you use this code/model for your research, please consider citing the followi
     year   = {2015}
 }
 ```
+```
+@inproceedings{higherordercrf_ECCV2016,
+	author = {Anurag Arnab and Sadeep Jayasumana and Shuai Zheng and Philip H. S. Torr},
+	title  = {Higher Order Conditional Random Fields in Deep Neural Networks},
+	booktitle = {European Conference on Computer Vision (ECCV)},
+	year   = {2016}
+}
+```
+
 
 #How to use the CRF-RNN layer
 Copy and paste the layer into a new prototxt file, the usage of this layer is indicatd as below. Check example folder for more detailed examples.
