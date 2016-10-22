@@ -25,7 +25,7 @@ Why are we doing this? This work is part of a project to build augmented reality
 
 For demo and more information about CRF-RNN please visit the project website <http://crfasrnn.torr.vision>.
 
-If you use this code/model for your research, please consider citing the following paper:
+If you use this code/model for your research, please consider citing the following papers:
 ```
 @inproceedings{crfasrnn_ICCV2015,
     author = {Shuai Zheng and Sadeep Jayasumana and Bernardino Romera-Paredes and Vibhav Vineet and Zhizhong Su and Dalong Du and Chang Huang and Philip H. S. Torr},
