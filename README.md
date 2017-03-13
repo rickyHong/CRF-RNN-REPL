@@ -127,7 +127,10 @@ sudo ./cuda*.run
 ```
 
 #####BLAS
-Install ATLAS or OpenBLAS or MKL.
+Install ATLAS or OpenBLAS or MKL. To install BLAS:
+```
+sudo apt-get install libatlas-base-dev 
+```
 
 #####Python 
 Install Anaconda Python distribution or install the default Python distribution with numpy/scipy/...
