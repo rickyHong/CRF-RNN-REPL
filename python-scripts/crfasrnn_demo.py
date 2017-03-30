@@ -13,167 +13,185 @@ Philip Torr (philip.torr@eng.ox.ac.uk)
 For more information about CRF-RNN, please vist the project website http://crfasrnn.torr.vision.
 """
 
-caffe_root = '../caffe/'
-import sys, getopt
-sys.path.insert(0, caffe_root + 'python')
-
-import os
-import cPickle
-import logging
+import sys
+import time
+import getopt
 import numpy as np
-import pandas as pd
 from PIL import Image as PILImage
-#import Image
-import cStringIO as StringIO
+
+# Path of the Caffe installation.
+_CAFFE_ROOT = "../caffe/"
+
+# Model definition and model file paths
+_MODEL_DEF_FILE = 'TVG_CRFRNN_new_deploy.prototxt'  # Contains the network definition.
+_MODEL_FILE = 'TVG_CRFRNN_COCO_VOC.caffemodel'  # Contains the trained weights. Must be downloaded separately.
+
+sys.path.insert(0, _CAFFE_ROOT + "python")
 import caffe
-import matplotlib.pyplot as plt
+
+def get_palette(num_cls):
+    """ Returns the color map for visualizing the segmentation mask.
+
+    Args:
+        num_cls: Number of classes in the dataset.
+
+    Returns:
+        The color map
+    """
+
+    n = num_cls
+    palette = [0] * (n * 3)
+    for j in xrange(0, n):
+        lab = j
+        palette[j * 3 + 0] = 0
+        palette[j * 3 + 1] = 0
+        palette[j * 3 + 2] = 0
+        i = 0
+        while lab:
+            palette[j * 3 + 0] |= (((lab >> 0) & 1) << (7 - i))
+            palette[j * 3 + 1] |= (((lab >> 1) & 1) << (7 - i))
+            palette[j * 3 + 2] |= (((lab >> 2) & 1) << (7 - i))
+            i += 1
+            lab >>= 3
+    return palette
 
 
-def tic():
-    #http://stackoverflow.com/questions/5849800/tic-toc-functions-analog-in-python
-    #Homemade version of matlab tic and toc functions
-    import time
-    global startTime_for_tictoc
-    startTime_for_tictoc = time.time()
+def crfasrnn_segmenter(model_def_file, model_file, gpu_device, inputs):
+    """ Returns the segmentation of the given image.
 
-def toc():
-    import time
-    if 'startTime_for_tictoc' in globals():
-        print "Elapsed time is " + str(time.time() - startTime_for_tictoc) + " seconds."
-    else:
-        print "Toc: start time not set"
+    Args:
+        model_def_file: File path of the Caffe model definition prototxt file.
+        model_file: File path of the trained model file. (contains trained weights)
+        gpu_device: ID of the GPU device. If using the CPU, set this to -1
+        inputs: The image input
 
+    Returns:
+        The segmented image
+    """
 
-def getpallete(num_cls):
-        # this function is to get the colormap for visualizing the segmentation mask
-        n = num_cls
-        pallete = [0]*(n*3)
-        for j in xrange(0,n):
-                lab = j
-                pallete[j*3+0] = 0
-                pallete[j*3+1] = 0
-                pallete[j*3+2] = 0
-                i = 0
-                while (lab > 0):
-                        pallete[j*3+0] |= (((lab >> 0) & 1) << (7-i))
-                        pallete[j*3+1] |= (((lab >> 1) & 1) << (7-i))
-                        pallete[j*3+2] |= (((lab >> 2) & 1) << (7-i))
-                        i = i + 1
-                        lab >>= 3
-        return pallete
-
-def crfasrnn_segmenter(model_file, pretrained_file, gpudevice, inputs):
-    if gpudevice >= 0:
-        #Do you have GPU device? NO GPU is -1!
-        has_gpu = 1
-        #which gpu device is available?
-        gpu_device=gpudevice#assume the first gpu device is available, e.g. Titan X
-    else:
-        has_gpu = 0
-    if has_gpu==1:
+    if gpu_device >= 0:
         caffe.set_device(gpu_device)
         caffe.set_mode_gpu()
     else:
         caffe.set_mode_cpu()
 
+    net = caffe.Net(model_def_file, model_file, caffe.TEST)
 
-    net = caffe.Net(model_file, pretrained_file, caffe.TEST)
-
-    input_ = np.zeros((len(inputs),
-        500, 500, inputs[0].shape[2]),
-        dtype=np.float32)
+    input_ = np.zeros((len(inputs), 500, 500, inputs[0].shape[2]),
+                      dtype=np.float32)
     for ix, in_ in enumerate(inputs):
         input_[ix] = in_
 
     # Segment
-    caffe_in = np.zeros(np.array(input_.shape)[[0,3,1,2]],
+    caffe_in = np.zeros(np.array(input_.shape)[[0, 3, 1, 2]],
                         dtype=np.float32)
     for ix, in_ in enumerate(input_):
         caffe_in[ix] = in_.transpose((2, 0, 1))
-    tic()
+    start_time = time.time()
     out = net.forward_all(**{net.inputs[0]: caffe_in})
-    toc()
+    end_time = time.time()
+    print("Time taken to run the network {:.4f} seconds".format(end_time - start_time))
     predictions = out[net.outputs[0]]
 
     return predictions[0].argmax(axis=0).astype(np.uint8)
 
-def run_crfasrnn(inputfile, outputfile, gpudevice):
-    MODEL_FILE = 'TVG_CRFRNN_new_deploy.prototxt'
-    PRETRAINED = 'TVG_CRFRNN_COCO_VOC.caffemodel'
-    IMAGE_FILE = inputfile
 
-    input_image = 255 * caffe.io.load_image(IMAGE_FILE)
-    input_image = resizeImage(input_image)
+def run_crfrnn(input_file, output_file, gpu_device):
+    """ Runs the CRF-RNN segmentation on the given RGB image and saves the segmentation mask.
 
-    width = input_image.shape[0]
-    height = input_image.shape[1]
-    maxDim = max(width,height)
+    Args:
+        input_file: Input RGB image file (e.g. in JPEG format)
+        output_file: Path to save the resulting segmentation in PNG format
+        gpu_device: ID of the GPU device. If using the CPU, set this to -1
+
+    """
+
+    input_image = 255 * caffe.io.load_image(input_file)
+    input_image = resize_image(input_image)
 
     image = PILImage.fromarray(np.uint8(input_image))
     image = np.array(image)
 
-    pallete = getpallete(256)
+    palette = get_palette(256)
 
     mean_vec = np.array([103.939, 116.779, 123.68], dtype=np.float32)
-    reshaped_mean_vec = mean_vec.reshape(1, 1, 3);
+    mean_vec = mean_vec.reshape(1, 1, 3)
 
     # Rearrange channels to form BGR
-    im = image[:,:,::-1]
+    im = image[:, :, ::-1]
     # Subtract mean
-    im = im - reshaped_mean_vec
+    im = im - mean_vec
 
     # Pad as necessary
     cur_h, cur_w, cur_c = im.shape
     pad_h = 500 - cur_h
     pad_w = 500 - cur_w
-    im = np.pad(im, pad_width=((0, pad_h), (0, pad_w), (0, 0)), mode = 'constant', constant_values = 0)
+    im = np.pad(im, pad_width=((0, pad_h), (0, pad_w), (0, 0)), mode='constant', constant_values=0)
+
     # Get predictions
-    #segmentation = net.predict([im])
-    segmentation  = crfasrnn_segmenter(MODEL_FILE,PRETRAINED,gpudevice,[im])
+    segmentation = crfasrnn_segmenter(_MODEL_DEF_FILE, _MODEL_FILE, gpu_device, [im])
+    segmentation = segmentation[0:cur_h, 0:cur_w]
 
-    segmentation2 = segmentation[0:cur_h, 0:cur_w]
-    output_im = PILImage.fromarray(segmentation2)
-    output_im.putpalette(pallete)
-    output_im.save(outputfile)
+    output_im = PILImage.fromarray(segmentation)
+    output_im.putpalette(palette)
+    output_im.save(output_file)
 
 
-def resizeImage(image):
-        width = image.shape[0]
-        height = image.shape[1]
-        maxDim = max(width,height)
-        if maxDim>500:
-            if height>width:
-                ratio = float(500.0/height)
-            else:
-                ratio = float(500.0/width)
-            image = PILImage.fromarray(np.uint8(image))
-            image = image.resize((int(height*ratio), int(width*ratio)),resample=PILImage.BILINEAR)
-            image = np.array(image)
-        return image
+def resize_image(image):
+    """ Resizes the image so that the largest dimension is not larger than 500 pixels.
+        If the image's largest dimension is already less than 500, no changes are made.
+
+    Args:
+        Input image
+
+    Returns:
+        Resized image where the largest dimension is less than 500 pixels
+    """
+
+    width, height = image.shape[0], image.shape[1]
+    max_dim = max(width, height)
+
+    if max_dim > 500:
+        if height > width:
+            ratio = float(500.0 / height)
+        else:
+            ratio = float(500.0 / width)
+        image = PILImage.fromarray(np.uint8(image))
+        image = image.resize((int(height * ratio), int(width * ratio)), resample=PILImage.BILINEAR)
+        image = np.array(image)
+    return image
+
 
 def main(argv):
-   inputfile = 'input.jpg'
-   outputfile = 'output.png'
-   gpu_device = 0 # use -1 to run only on CPU, use 0-3[7] to run on GPU
-   try:
-      opts, args = getopt.getopt(argv,'hi:o:g:',["ifile=","ofile=","gpu="])
-   except getopt.GetoptError:
-      print 'crfasrnn_demo.py -i <inputfile> -o <outputfile> -g <gpu_device>'
-      sys.exit(2)
-   for opt, arg in opts:
-      if opt == '-h':
-         print 'crfasrnn_demo.py -i <inputfile> -o <outputfile> -g <gpu_device>'
-         sys.exit()
-      elif opt in ("-i", "ifile"):
-         inputfile = arg
-      elif opt in ("-o", "ofile"):
-         outputfile = arg
-      elif opt in ("-g", "gpudevice"):
-         gpu_device = int(arg)
-   print 'Input file is "', inputfile
-   print 'Output file is "', outputfile
-   print 'GPU_DEVICE is "', gpu_device
-   run_crfasrnn(inputfile,outputfile,gpu_device)
+    """ Main entry point to the program. """
+
+    input_file = "input.jpg"
+    output_file = "output.png"
+    gpu_device = -1  # Use -1 to run only on the CPU, use 0-3[7] to run on the GPU
+    try:
+        opts, args = getopt.getopt(argv, 'hi:o:g:', ["ifile=", "ofile=", "gpu="])
+    except getopt.GetoptError:
+        print 'crfasrnn_demo.py -i <input_file> -o <output_file> -g <gpu_device>'
+        sys.exit(2)
+
+    for opt, arg in opts:
+        if opt == '-h':
+            print 'crfasrnn_demo.py -i <inputfile> -o <outputfile> -g <gpu_device>'
+            sys.exit()
+        elif opt in ("-i", "ifile"):
+            input_file = arg
+        elif opt in ("-o", "ofile"):
+            output_file = arg
+        elif opt in ("-g", "gpudevice"):
+            gpu_device = int(arg)
+
+    print("Input file: {}".format(input_file))
+    print("Output file: {}".format(output_file))
+    if gpu_device >= 0:
+        print("GPU device id: {}".format(gpu_device))
+    else:
+        print("Using the CPU (set parameters appropriately to use the GPU)")
+    run_crfrnn(input_file, output_file, gpu_device)
 
 
 if __name__ == "__main__":
