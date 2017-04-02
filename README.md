@@ -43,7 +43,7 @@ If you use this code/model for your research, please cite the following papers:
 ```
 
 
-# How to use the CRF-RNN layer
+## How to use the CRF-RNN layer
 CRF-RNN has been developed as a custom Caffe layer named MultiStageMeanfieldLayer. Usage of this layer in the model definition prototxt file looks the following. Check the matlab-scripts or the python-scripts folder for more detailed examples.
 ```
 # This is part of FCN, coarse is a blob coming from FCN
@@ -82,7 +82,7 @@ layer {
   }
 }
 ```
-# Installation Guide
+## Installation Guide
 First, clone the project by running:
 ```
 git clone --recursive https://github.com/torrvision/crfasrnn.git
