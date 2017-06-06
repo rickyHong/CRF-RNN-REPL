@@ -231,7 +231,7 @@ hyenal kindly provided a purely GPU version of CRF-RNN. This would lead to consi
 [Lasagne CRFasRNN layer][https://github.com/hapemask/crfrnn_layer]
 
 #### Latest Caffe with CPU/GPU CRF-RNN
-[crfasrnn-caffe](https://github.com/torrvision/caffe/tree/crfrnn)
+[crfasrnn-caffe][https://github.com/torrvision/caffe/tree/crfrnn]
 
 Let us know if we have missed any other works from third parties.
 
