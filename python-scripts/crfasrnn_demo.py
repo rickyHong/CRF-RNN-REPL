@@ -178,12 +178,12 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv, 'hi:o:g:', ["ifile=", "ofile=", "gpu="])
     except getopt.GetoptError:
-        print 'crfasrnn_demo.py -i <input_file> -o <output_file> -g <gpu_device>'
+        print("crfasrnn_demo.py -i <input_file> -o <output_file> -g <gpu_device>")
         sys.exit(2)
 
     for opt, arg in opts:
         if opt == '-h':
-            print 'crfasrnn_demo.py -i <inputfile> -o <outputfile> -g <gpu_device>'
+            print("crfasrnn_demo.py -i <inputfile> -o <outputfile> -g <gpu_device>")
             sys.exit()
         elif opt in ("-i", "ifile"):
             input_file = arg
