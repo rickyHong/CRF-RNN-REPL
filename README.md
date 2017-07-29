@@ -4,7 +4,7 @@
 [![License (3-Clause BSD)](https://img.shields.io/badge/license-BSD%203--Clause-brightgreen.svg?style=flat-square)](https://github.com/torrvision/crfasrnn/blob/master/LICENSE)
 
 <b>Live demo:</b> [http://crfasrnn.torr.vision](http://crfasrnn.torr.vision) <br/>
-<b>Updates:</b> <br/>
+<b>Updates:</b>
 * [Keras/Tensorflow](https://github.com/sadeepj/crfasrnn_keras) version is now available. <br/>
 * We now support the latest Caffe future version. <br/>
 
