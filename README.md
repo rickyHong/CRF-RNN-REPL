@@ -4,7 +4,8 @@
 [![License (3-Clause BSD)](https://img.shields.io/badge/license-BSD%203--Clause-brightgreen.svg?style=flat-square)](https://github.com/torrvision/crfasrnn/blob/master/LICENSE)
 
 <b>Live demo:</b> [http://crfasrnn.torr.vision](http://crfasrnn.torr.vision) <br/>
-<b>Update:</b> We now support the latest Caffe future version. Keras/Tensorflow version can be found [here](https://github.com/sadeepj/crfasrnn_keras).
+<b>Updates:</b> We now support the latest Caffe future version. <br/>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Keras/Tensorflow version can be found [here](https://github.com/sadeepj/crfasrnn_keras).
 
 This package contains code for the "CRF-RNN" semantic image segmentation method, published in the ICCV 2015 paper [Conditional Random Fields as Recurrent Neural Networks](http://www.robots.ox.ac.uk/~szheng/papers/CRFasRNN.pdf). This paper was initially described in an [arXiv tech report](http://arxiv.org/abs/1502.03240). The online demonstration based on this code won the Best Demo Prize at ICCV 2015. Our software is built on top of the [Caffe](http://caffe.berkeleyvision.org/) deep learning library. The current version was developed by:
 
@@ -232,6 +233,9 @@ hyenal kindly provided a purely GPU version of CRF-RNN. This would lead to consi
 
 #### Latest Caffe with CPU/GPU CRF-RNN
 [crfasrnn-caffe](https://github.com/torrvision/caffe/tree/crfrnn)
+
+#### Keras/Tensorflow version of CRF-RNN
+[crfasrnn_keras](https://github.com/sadeepj/crfasrnn_keras)
 
 Let us know if we have missed any other works from third parties.
 
