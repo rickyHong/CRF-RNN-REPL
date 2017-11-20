@@ -239,7 +239,12 @@ hyenal kindly provided a purely GPU version of CRF-RNN. This would lead to consi
 #### Keras/Tensorflow version of CRF-RNN
 [crfasrnn_keras](https://github.com/sadeepj/crfasrnn_keras)
 
+#### Speed/accuracy trade-offs for modern convolutional object detectors
+https://medium.com/@phelixlau/speed-accuracy-trade-offs-for-modern-convolutional-object-detectors-bbad4e4e0718
+
 Let us know if we have missed any other works from third parties.
 
 
 For more information about CRF-RNN please vist the project website http://crfasrnn.torr.vision. Contact: <crfasrnn@gmail.com>
+
+
